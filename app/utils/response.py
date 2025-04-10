@@ -1,16 +1,22 @@
-from flask import jsonify
+from typing import Any, Dict, Optional
+from pydantic import BaseModel
 
-def success_response(data, message="Success"):
-    """Return a success response"""
-    return jsonify({
-        "status": "success",
-        "message": message,
-        "data": data
-    }), 200
+class APIResponse(BaseModel):
+    success: bool
+    message: str
+    data: Optional[Any] = None
+    error: Optional[str] = None
 
-def error_response(message, status_code=400):
-    """Return an error response"""
-    return jsonify({
-        "status": "error",
-        "message": message
-    }), status_code 
+def success_response(data: Any = None, message: str = "Success") -> Dict:
+    return APIResponse(
+        success=True,
+        message=message,
+        data=data
+    ).dict()
+
+def error_response(message: str = "Error", error: str = None) -> Dict:
+    return APIResponse(
+        success=False,
+        message=message,
+        error=error
+    ).dict() 
